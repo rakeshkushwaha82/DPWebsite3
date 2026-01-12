@@ -37,7 +37,7 @@ const App: React.FC = () => {
           onBookConsultation={handleBookConsultation}
         />
         <Process />
-        <Gallery />
+        <Gallery onBookConsultation={handleBookConsultation} />
         <Downloads />
         <Testimonials />
         <Contact prefilledService={prefilledService} />

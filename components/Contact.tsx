@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ContactProps {
@@ -19,6 +19,22 @@ const Contact: React.FC<ContactProps> = ({ prefilledService }) => {
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
   const [selectedInterest, setSelectedInterest] = useState<string>('Full Home');
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
+
+  const serviceOptions = useMemo(() => {
+    const defaults = [
+      'Modular Kitchens', 
+      'Living & Dining', 
+      'Master Bedrooms', 
+      'Space Saving Furniture',
+      'Full Home',
+      'Shop',
+      'Office'
+    ];
+    if (prefilledService && !defaults.includes(prefilledService)) {
+      return [prefilledService, ...defaults];
+    }
+    return defaults;
+  }, [prefilledService]);
 
   useEffect(() => {
     if (prefilledService) {
@@ -44,16 +60,6 @@ const Contact: React.FC<ContactProps> = ({ prefilledService }) => {
     
     setTimeout(() => setFormStatus('idle'), 8000);
   };
-
-  const serviceOptions = [
-    'Modular Kitchens', 
-    'Living & Dining', 
-    'Master Bedrooms', 
-    'Space Saving Furniture',
-    'Full Home',
-    'Shop',
-    'Office'
-  ];
 
   return (
     <section id="contact" className="py-24 bg-[#fcfcfc] relative overflow-hidden">

@@ -38,7 +38,7 @@ const Footer: React.FC = () => {
               </div>
             </div>
             <p className="text-gray-400 leading-relaxed font-light text-sm max-w-xs">
-              Redefining luxury living across Delhi NCR. We combine structural precision with artistic vision to create homes that are as unique as you are. 45-day guaranteed move-in.
+              Redefining luxury living and commercial excellence across Delhi NCR. We combine structural precision with artistic vision.
             </p>
             <div className="flex gap-4">
               {['FB', 'IG', 'LI', 'TW'].map(social => (
@@ -50,12 +50,12 @@ const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="text-[#c5a059] font-bold uppercase tracking-[0.5em] text-[10px] mb-12">Services</h4>
+            <h4 className="text-[#c5a059] font-bold uppercase tracking-[0.5em] text-[10px] mb-12">Expertise</h4>
             <ul className="space-y-6 text-gray-400 font-light text-sm">
               <li><a href="#services" className="hover:text-[#c5a059] transition-colors flex items-center gap-3">Modular Kitchens</a></li>
-              <li><a href="#services" className="hover:text-[#c5a059] transition-colors flex items-center gap-3">Wardrobe Systems</a></li>
-              <li><a href="#services" className="hover:text-[#c5a059] transition-colors flex items-center gap-3">Luxury Living Rooms</a></li>
-              <li><a href="#services" className="hover:text-[#c5a059] transition-colors flex items-center gap-3">Complete Transformation</a></li>
+              <li><a href="#services" className="hover:text-[#c5a059] transition-colors flex items-center gap-3">Luxury Offices</a></li>
+              <li><a href="#services" className="hover:text-[#c5a059] transition-colors flex items-center gap-3">Showroom Design</a></li>
+              <li><a href="#services" className="hover:text-[#c5a059] transition-colors flex items-center gap-3">Full Home Interiors</a></li>
             </ul>
           </div>
 
@@ -78,8 +78,8 @@ const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="text-[#c5a059] font-bold uppercase tracking-[0.5em] text-[10px] mb-12">Newsletter</h4>
-            <p className="text-gray-400 text-xs mb-8 font-light leading-relaxed">Join 5000+ elite homeowners receiving our curated weekly design trends and space optimization tips.</p>
+            <h4 className="text-[#c5a059] font-bold uppercase tracking-[0.5em] text-[10px] mb-12">Connect</h4>
+            <p className="text-gray-400 text-xs mb-8 font-light leading-relaxed">Join 5000+ elite homeowners receiving our curated design trends.</p>
             <div className="relative group">
               <input type="email" placeholder="Email Address" className="w-full bg-white/5 border-b border-white/20 py-5 px-3 text-sm focus:outline-none focus:border-[#c5a059] transition-all" />
               <button className="absolute right-0 top-1/2 -translate-y-1/2 text-[#c5a059] p-3 hover:scale-110 transition-transform">
@@ -90,9 +90,14 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="pt-16 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
-          <p className="text-gray-500 text-[10px] uppercase tracking-[0.4em] font-bold">
-            © 2024 DP Interior. Crafting Designer Sanctuaries.
-          </p>
+          <div className="flex flex-col gap-2">
+            <p className="text-gray-500 text-[10px] uppercase tracking-[0.4em] font-bold">
+              © 2024 DP Interior. Crafting Designer Sanctuaries.
+            </p>
+            <p className="text-[#c5a059] text-[9px] uppercase tracking-[0.3em] font-bold">
+              Designed by : PRVM Consultancy services 9910691877
+            </p>
+          </div>
           <div className="flex gap-12 text-[10px] uppercase tracking-[0.4em] font-bold text-gray-500">
             <a href="#" className="hover:text-[#c5a059] transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-[#c5a059] transition-colors">Terms of Service</a>

@@ -50,6 +50,24 @@
       .no-scrollbar::-webkit-scrollbar {
         display: none;
       }
+      
+      /* Print Styling for Catalogue Template */
+      .pdf-container {
+        position: absolute;
+        left: -9999px;
+        top: -9999px;
+        width: 794px; /* A4 width at 96 DPI */
+      }
+      .pdf-page {
+        width: 794px;
+        height: 1123px;
+        background: white;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-col;
+      }
     </style>
   </head>
   <body>
@@ -63,7 +81,9 @@
     "react-dom/": "https://esm.sh/react-dom@19.0.0/",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
     "framer-motion": "https://esm.sh/framer-motion@11.11.17?external=react,react-dom",
-    "@google/genai": "https://esm.sh/@google/genai"
+    "@google/genai": "https://esm.sh/@google/genai",
+    "html2canvas": "https://esm.sh/html2canvas@1.4.1",
+    "jspdf": "https://esm.sh/jspdf@2.5.1"
   }
 }
 </script>

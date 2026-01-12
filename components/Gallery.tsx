@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { GoogleGenAI } from "@google/genai";
 
 interface ProjectStats {
@@ -23,6 +23,10 @@ interface GalleryItem {
   stats: ProjectStats;
 }
 
+interface GalleryProps {
+  onBookConsultation: (service: string) => void;
+}
+
 const slideVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 1000 : -1000,
@@ -43,7 +47,7 @@ const slideVariants = {
   })
 };
 
-const Gallery: React.FC = () => {
+const Gallery: React.FC<GalleryProps> = ({ onBookConsultation }) => {
   const [filter, setFilter] = useState('all');
   const [styleFilter, setStyleFilter] = useState('all');
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -52,11 +56,16 @@ const Gallery: React.FC = () => {
   const [lightboxMode, setLightboxMode] = useState<'image' | 'video' | 'tour'>('image');
   const [zoomScale, setZoomScale] = useState(1);
   const [lastTap, setLastTap] = useState(0);
-  const [initialDistance, setInitialDistance] = useState<number | null>(null);
   const [isGeneratingTour, setIsGeneratingTour] = useState(false);
+  
+  const initialPinchDistance = useRef<number | null>(null);
+  const startScale = useRef<number>(1);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
   
   const dragX = useMotionValue(0);
   const dragY = useMotionValue(0);
+  
+  const springScale = useSpring(zoomScale, { stiffness: 300, damping: 30 });
 
   const [items, setItems] = useState<GalleryItem[]>([
     { 
@@ -72,7 +81,7 @@ const Gallery: React.FC = () => {
     { 
       id: 'off1',
       cat: 'commercial',
-      url: 'https://images.unsplash.com/photo-1497366216548-37526070297c',
+      url: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174',
       videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-modern-office-interior-design-with-big-windows-39977-large.mp4',
       name: 'Nexus Tech Office',
       location: 'Sec-16, Greater Noida West',
@@ -88,6 +97,46 @@ const Gallery: React.FC = () => {
       location: 'Gaur World Smart Street',
       description: 'Luxury retail space with gold-accents and signature lighting.',
       stats: { area: '1200 sqft', rooms: 'Showroom', style: 'Art Deco', year: '2023' }
+    },
+    { 
+      id: 'off3',
+      cat: 'commercial',
+      url: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36',
+      videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-modern-office-interior-design-with-big-windows-39977-large.mp4',
+      name: 'Dynamic Co-working Hub',
+      location: 'Noida Sector 62',
+      description: 'Agile workspace designed for startups and creative professionals.',
+      stats: { area: '2800 sqft', rooms: 'Open Plan', style: 'Industrial Modern', year: '2024' }
+    },
+    { 
+      id: 'shp2',
+      cat: 'commercial',
+      url: 'https://images.unsplash.com/photo-1588127333419-b9d7de223dcd',
+      videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-coffee-shop-interior-with-modern-lighting-39980-large.mp4',
+      name: 'Gemstone Jewelers HQ',
+      location: 'Gaur City Mall',
+      description: 'Ultra-luxury showroom featuring high-security glass and bespoke lighting.',
+      stats: { area: '1800 sqft', rooms: 'Showroom', style: 'Royal Gold', year: '2024' }
+    },
+    { 
+      id: 'off4',
+      cat: 'commercial',
+      url: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2',
+      videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-modern-office-interior-design-with-big-windows-39977-large.mp4',
+      name: 'Corporate Executive Suites',
+      location: 'Advant Navis, Noida',
+      description: 'Minimalist corporate headquarters with Italian marble and oak finishes.',
+      stats: { area: '6500 sqft', rooms: 'Floor Plan', style: 'Minimalist Luxury', year: '2024' }
+    },
+    { 
+      id: 'shp3',
+      cat: 'commercial',
+      url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8',
+      videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-coffee-shop-interior-with-modern-lighting-39980-large.mp4',
+      name: 'Vogue Fashion Studio',
+      location: 'Greater Noida West',
+      description: 'Contemporary fashion boutique with high-gloss textures and geometric mirrors.',
+      stats: { area: '950 sqft', rooms: 'Retail', style: 'Contemporary', year: '2023' }
     },
     { 
       id: 'com4',
@@ -128,16 +177,6 @@ const Gallery: React.FC = () => {
       location: 'Indirapuram',
       description: 'Luxury master bedroom with a boutique walk-in closet.',
       stats: { area: '280 sqft', rooms: 'Premium Suite', style: 'Scandinavian', year: '2024' }
-    },
-    { 
-      id: 'off2',
-      cat: 'commercial',
-      url: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2',
-      videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-modern-office-interior-design-with-big-windows-39977-large.mp4',
-      name: 'Creative Studio HQ',
-      location: 'Noida Sector 62',
-      description: 'Industrial loft style office for a digital marketing firm.',
-      stats: { area: '3800 sqft', rooms: 'Studio', style: 'Industrial Loft', year: '2024' }
     }
   ]);
 
@@ -151,6 +190,10 @@ const Gallery: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('dp_favorites', JSON.stringify(favorites));
   }, [favorites]);
+
+  useEffect(() => {
+    springScale.set(zoomScale);
+  }, [zoomScale, springScale]);
 
   const toggleFavorite = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -217,20 +260,20 @@ const Gallery: React.FC = () => {
         e.touches[0].clientX - e.touches[1].clientX,
         e.touches[0].clientY - e.touches[1].clientY
       );
-      setInitialDistance(dist);
+      initialPinchDistance.current = dist;
+      startScale.current = zoomScale;
     }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (e.touches.length === 2 && initialDistance !== null) {
+    if (e.touches.length === 2 && initialPinchDistance.current !== null) {
       const dist = Math.hypot(
         e.touches[0].clientX - e.touches[1].clientX,
         e.touches[0].clientY - e.touches[1].clientY
       );
-      const scaleDelta = dist / initialDistance;
-      const newScale = Math.min(Math.max(zoomScale * scaleDelta, 1), 5);
+      const scaleDelta = dist / initialPinchDistance.current;
+      const newScale = Math.min(Math.max(startScale.current * scaleDelta, 1), 5);
       setZoomScale(newScale);
-      setInitialDistance(dist);
     }
   };
 
@@ -264,6 +307,16 @@ const Gallery: React.FC = () => {
     } finally {
       setIsGeneratingTour(false);
     }
+  };
+
+  const zoomIn = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setZoomScale(prev => Math.min(prev + 0.5, 5));
+  };
+  
+  const zoomOut = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setZoomScale(prev => Math.max(prev - 0.5, 1));
   };
 
   return (
@@ -335,7 +388,10 @@ const Gallery: React.FC = () => {
                         <p className="text-gray-400 text-[10px] uppercase font-bold tracking-widest">{item.stats.style}</p>
                       </div>
                     </div>
-                    <button onClick={() => { setSelectedIndex(idx); setDirection(0); }} className="w-full bg-gray-50 text-[#001f3f] py-4 rounded-xl text-[10px] font-bold tracking-[0.2em] hover:bg-[#001f3f] hover:text-white transition-all uppercase shadow-sm">Enter Virtual Space</button>
+                    <div className="flex flex-col gap-3">
+                      <button onClick={() => { setSelectedIndex(idx); setDirection(0); }} className="w-full bg-gray-50 text-[#001f3f] py-4 rounded-xl text-[10px] font-bold tracking-[0.2em] hover:bg-[#001f3f] hover:text-white transition-all uppercase shadow-sm">Enter Virtual Space</button>
+                      <button onClick={() => onBookConsultation(`${item.name} (${item.stats.style})`)} className="w-full border border-gray-100 text-gray-400 py-4 rounded-xl text-[10px] font-bold tracking-[0.2em] hover:border-[#c5a059] hover:text-[#c5a059] transition-all uppercase">Book Consultation</button>
+                    </div>
                   </div>
                 </motion.div>
               );
@@ -346,7 +402,12 @@ const Gallery: React.FC = () => {
 
       <AnimatePresence>
         {selectedIndex !== null && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#001f3f]/98 backdrop-blur-3xl touch-none">
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }} 
+            className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#001f3f]/98 backdrop-blur-3xl touch-none"
+          >
             <div className="absolute top-0 left-0 w-full p-6 md:p-12 flex flex-col md:flex-row justify-between items-center gap-8 z-[220]">
               <div className="flex flex-col items-center md:items-start text-center md:text-left">
                 <span className="text-[#c5a059] text-[10px] font-bold tracking-[0.5em] uppercase mb-2">Signature Project Experience</span>
@@ -364,27 +425,73 @@ const Gallery: React.FC = () => {
               </div>
             </div>
 
-            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+            <div className="relative w-full h-full flex items-center justify-center overflow-hidden" ref={imageContainerRef}>
               <div className="absolute left-8 z-[210] hidden md:block">
-                <button onClick={showPrev} className="p-6 bg-white/5 rounded-3xl text-white/30 hover:text-white border border-white/5"><svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15 19l-7-7 7-7" strokeWidth="1.5"/></svg></button>
+                <button onClick={showPrev} className="p-6 bg-white/5 rounded-3xl text-white/30 hover:text-white border border-white/5 transition-all active:scale-90"><svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15 19l-7-7 7-7" strokeWidth="1.5"/></svg></button>
               </div>
               <div className="absolute right-8 z-[210] hidden md:block">
-                <button onClick={showNext} className="p-6 bg-white/5 rounded-3xl text-white/30 hover:text-white border border-white/5"><svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 5l7 7-7 7" strokeWidth="1.5"/></svg></button>
+                <button onClick={showNext} className="p-6 bg-white/5 rounded-3xl text-white/30 hover:text-white border border-white/5 transition-all active:scale-90"><svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 5l7 7-7 7" strokeWidth="1.5"/></svg></button>
               </div>
 
-              <div className="absolute bottom-40 right-12 z-[210] hidden md:block">
-                <div className="flex items-center gap-4 text-white/20 font-serif text-5xl">
-                  <span className="text-[#c5a059]">{String(selectedIndex + 1).padStart(2, '0')}</span>
-                  <span className="text-xl">/</span>
-                  <span className="text-sm tracking-widest">{String(filteredItems.length).padStart(2, '0')}</span>
-                </div>
-              </div>
+              <AnimatePresence>
+                {lightboxMode === 'image' && (
+                  <motion.div 
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="absolute right-12 top-1/2 -translate-y-1/2 z-[210] hidden lg:flex flex-col gap-4 bg-white/5 backdrop-blur-xl p-3 rounded-2xl border border-white/10"
+                  >
+                    <button onClick={zoomIn} className="p-3 text-white/60 hover:text-white transition-colors border-b border-white/5" title="Zoom In">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 4v16m8-8H4" strokeWidth="2" strokeLinecap="round"/></svg>
+                    </button>
+                    <button onClick={resetZoom} className="p-3 text-white/60 hover:text-white transition-colors" title="Reset Zoom">
+                      <svg className="w-5 h-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" strokeWidth="2" strokeLinecap="round"/></svg>
+                    </button>
+                    <button onClick={zoomOut} className="p-3 text-white/60 hover:text-white transition-colors border-t border-white/5" title="Zoom Out">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M20 12H4" strokeWidth="2" strokeLinecap="round"/></svg>
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <AnimatePresence initial={false} custom={direction} mode="wait">
-                <motion.div key={`${lightboxMode}-${selectedIndex}`} custom={direction} variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ type: "spring", stiffness: 300, damping: 30 }} className="w-full h-full flex items-center justify-center p-6 md:p-24" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onClick={handleTap}>
+                <motion.div 
+                  key={`${lightboxMode}-${selectedIndex}`} 
+                  custom={direction} 
+                  variants={slideVariants} 
+                  initial="enter" 
+                  animate="center" 
+                  exit="exit" 
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }} 
+                  className="w-full h-full flex items-center justify-center p-6 md:p-24" 
+                  onTouchStart={handleTouchStart} 
+                  onTouchMove={handleTouchMove} 
+                  onClick={handleTap}
+                >
                    {lightboxMode === 'image' && (
-                     <motion.div style={{ x: dragX, y: dragY, scale: zoomScale, cursor: zoomScale > 1 ? 'grab' : 'zoom-in' }} drag={zoomScale > 1} dragElastic={0.05} className="relative">
-                        <img src={getOptimizedUrl(filteredItems[selectedIndex].url, 2400)} className="max-w-full max-h-[75vh] object-contain rounded-3xl shadow-3xl border border-white/5" alt="Detail View" />
+                     <motion.div 
+                        style={{ 
+                          x: dragX, 
+                          y: dragY, 
+                          scale: springScale, 
+                          cursor: zoomScale > 1 ? 'grab' : 'zoom-in',
+                          transition: 'cursor 0.3s ease'
+                        }} 
+                        drag={zoomScale > 1} 
+                        dragElastic={0.1}
+                        dragConstraints={imageContainerRef}
+                        className="relative"
+                      >
+                        <img 
+                          src={getOptimizedUrl(filteredItems[selectedIndex].url, 2400)} 
+                          className="max-w-full max-h-[75vh] object-contain rounded-3xl shadow-3xl border border-white/5 select-none" 
+                          alt="Detail View"
+                          draggable={false}
+                        />
+                        {zoomScale > 1 && (
+                          <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-white text-[10px] font-bold uppercase tracking-[0.2em] pointer-events-none border border-white/10">
+                            Zoom: {zoomScale.toFixed(1)}x
+                          </div>
+                        )}
                      </motion.div>
                    )}
                    {lightboxMode === 'video' && <video autoPlay loop muted src={filteredItems[selectedIndex].videoUrl} className="max-w-6xl aspect-video rounded-[3rem] object-cover shadow-3xl" />}
@@ -417,7 +524,15 @@ const Gallery: React.FC = () => {
                    </div>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-6 w-full lg:w-auto">
-                   <button className="flex-1 bg-white text-[#001f3f] px-12 py-6 rounded-2xl font-bold text-[10px] tracking-[0.3em] uppercase hover:bg-[#c5a059] hover:text-white transition-all shadow-2xl">Request Similar Plan</button>
+                   <button 
+                     onClick={() => {
+                        onBookConsultation(`${filteredItems[selectedIndex].name} (${filteredItems[selectedIndex].stats.style})`);
+                        closeLightbox();
+                     }} 
+                     className="flex-1 bg-white text-[#001f3f] px-12 py-6 rounded-2xl font-bold text-[10px] tracking-[0.3em] uppercase hover:bg-[#c5a059] hover:text-white transition-all shadow-2xl"
+                    >
+                      Book Consultation for this Project
+                    </button>
                 </div>
               </div>
             </div>
