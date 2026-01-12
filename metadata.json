@@ -1,0 +1,7 @@
+{
+  "name": "https://github.com/rakeshkushwaha82/DPInterior",
+  "description": "Premium interior design services specializing in modern kitchens, modular wardrobes, and complete home transformations. Inspired by high-end design standards and expert craftsmanship.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
