@@ -6,6 +6,7 @@ import Hero from './components/Hero';
 import Services from './components/Services';
 import Stats from './components/Stats';
 import Gallery from './components/Gallery';
+import Downloads from './components/Downloads';
 import Process from './components/Process';
 import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
@@ -37,6 +38,7 @@ const App: React.FC = () => {
         />
         <Process />
         <Gallery />
+        <Downloads />
         <Testimonials />
         <Contact prefilledService={prefilledService} />
       </main>

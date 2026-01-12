@@ -16,11 +16,8 @@ export const LogoSVG = () => (
       </linearGradient>
     </defs>
     <rect width="100" height="100" rx="24" fill="#001a35"/>
-    {/* Architectural Pillar for 'D' */}
     <path d="M32 30V70H44C54 70 62 62 62 50C62 38 54 30 44 30H32Z" stroke="url(#goldGradient)" strokeWidth="3.5" strokeLinecap="round" />
-    {/* Fluid Arc for 'P' */}
     <path d="M48 30V75M48 52C58 52 68 48 68 38C68 28 58 24 48 24" stroke="url(#goldGradient)" strokeWidth="3.5" strokeLinecap="round" transform="translate(4, 4)" />
-    {/* Precision Diamond Mark */}
     <rect x="47.5" y="47.5" width="5" height="5" transform="rotate(45 50 50)" fill="#f7e1ad" />
   </svg>
 );
@@ -61,7 +58,7 @@ const Navbar: React.FC<NavbarProps> = ({ onConsultClick }) => {
     }
   };
 
-  const navLinks = ['Home', 'Services', 'Gallery', 'Testimonials', 'Contact'];
+  const navLinks = ['Home', 'Services', 'Gallery', 'Downloads', 'Testimonials', 'Contact'];
 
   return (
     <>
