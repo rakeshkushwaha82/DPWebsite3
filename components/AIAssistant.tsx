@@ -104,6 +104,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onClose }) => {
     setLoadingMessageIndex(5);
 
     try {
+      // Create a new GoogleGenAI instance right before making an API call
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateImages({
         model: 'imagen-4.0-generate-001',
@@ -147,6 +148,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onClose }) => {
     setLoadingMessageIndex(0);
 
     try {
+      // Create a new GoogleGenAI instance right before making an API call
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: selectedModel,
