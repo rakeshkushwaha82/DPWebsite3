@@ -62,7 +62,7 @@ const services: ServiceDetail[] = [
   {
     title: "Modular Kitchens",
     desc: "Ergonomic designs with high-grade BWP Marine Ply and smart storage.",
-    image: "https://images.unsplash.com/photo-1556912177-c54030639a4c?auto=format&fit=crop&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1556911223-e27027788ddf?auto=format&fit=crop&q=80&w=1200",
     details: "Our modular kitchens are engineered for Indian cooking styles while maintaining European aesthetic standards. We focus on 'The Golden Triangle' efficiency.",
     philosophy: "We follow the 'Ergo-Workflow' philosophy, adjusting counter heights and zoning storage by frequency of use.",
     materials: [
@@ -71,7 +71,7 @@ const services: ServiceDetail[] = [
     ],
     materialBadges: [{ label: "Waterproof", icon: Icons.Waterproof }, { label: "Termite Proof", icon: Icons.TermiteProof }],
     features: ["Oil-pullouts", "Magic Corners", "Built-in Appliances", "G-Profile Handles"],
-    gallery: ["https://images.unsplash.com/photo-1556912177-c54030639a4c?auto=format&fit=crop&q=80&w=1200", "https://images.unsplash.com/photo-1565538810643-95bdb8104517?auto=format&fit=crop&q=80&w=1200"],
+    gallery: ["https://images.unsplash.com/photo-1556911223-e27027788ddf?auto=format&fit=crop&q=80&w=1200", "https://images.unsplash.com/photo-1565538810643-95bdb8104517?auto=format&fit=crop&q=80&w=1200"],
     techSpecs: [
         { label: "Delivery", value: "45 Days", icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" strokeWidth="2" /></svg> }
     ]
@@ -192,7 +192,7 @@ const Services: React.FC<ServicesProps> = ({ onConsultClick, onBookConsultation 
                 </div>
 
                 <div className="mt-auto space-y-4">
-                  <button onClick={(e) => { e.stopPropagation(); onBookConsultation(service.title); }} className="w-full bg-[#c5a059] text-white py-4 rounded-2xl text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-[#001f3f] transition-all shadow-lg active:scale-95">Book Free Consultation</button>
+                  <button onClick={(e) => { e.stopPropagation(); onBookConsultation(service.title); }} className="w-full bg-[#c5a059] text-white py-4 rounded-2xl text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#001f3f] transition-all shadow-lg active:scale-95">Book Free Consultation</button>
                 </div>
               </div>
             </motion.div>
@@ -256,7 +256,7 @@ const Services: React.FC<ServicesProps> = ({ onConsultClick, onBookConsultation 
                 </div>
 
                 <div className="pt-8 flex flex-col sm:flex-row gap-4">
-                  <button onClick={() => { onBookConsultation(selectedService.title); setSelectedService(null); }} className="flex-1 bg-[#001f3f] text-white py-6 rounded-2xl font-bold tracking-[0.4em] text-[10px] hover:bg-[#c5a059] transition-all uppercase shadow-xl">Get A Free Quote</button>
+                  <button onClick={() => { onBookConsultation(selectedService.title); setSelectedService(null); }} className="flex-1 bg-[#001f3f] text-white py-6 rounded-2xl font-bold tracking-[0.4em] text-sm hover:bg-[#c5a059] transition-all uppercase shadow-xl">Get A Free Quote</button>
                 </div>
               </div>
             </motion.div>

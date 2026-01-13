@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Message {
@@ -94,6 +94,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onClose }) => {
     localStorage.removeItem(STORAGE_KEY);
   };
 
+  // Upgraded to follow GenAI guidelines: Using gemini-2.5-flash-image for default image generation via generateContent.
   const handleGenerateImage = async (customPrompt?: string) => {
     const promptToUse = customPrompt || input;
     if (!promptToUse.trim()) return;
@@ -106,25 +107,32 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onClose }) => {
     try {
       // Create a new GoogleGenAI instance right before making an API call
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const response = await ai.models.generateImages({
-        model: 'imagen-4.0-generate-001',
-        prompt: `A professional high-end interior design mood board for ${promptToUse}. Include luxury materials, color swatches, furniture inspirations, and a cohesive architectural aesthetic. High resolution, cinematic lighting, ultra-modern style.`,
+      const response: GenerateContentResponse = await ai.models.generateContent({
+        model: 'gemini-2.5-flash-image',
+        contents: {
+          parts: [
+            {
+              text: `A professional high-end interior design mood board for ${promptToUse}. Include luxury materials, color swatches, furniture inspirations, and a cohesive architectural aesthetic. High resolution, cinematic lighting, ultra-modern style.`,
+            },
+          ],
+        },
         config: {
-          numberOfImages: 1,
-          outputMimeType: 'image/jpeg',
-          aspectRatio: '16:9',
+          imageConfig: {
+            aspectRatio: "16:9",
+          },
         },
       });
 
-      const base64EncodeString = response.generatedImages[0].image.imageBytes;
-      const imageUrl = `data:image/png;base64,${base64EncodeString}`;
-
-      setMessages(prev => [...prev, { 
-        role: 'ai', 
-        text: "Here is a conceptual mood board for your vision. This includes a curated selection of textures and palettes aligned with your style preferences.",
-        image: imageUrl,
-        isImage: true 
-      }]);
+      const base64Part = response.candidates?.[0]?.content?.parts.find(p => p.inlineData);
+      if (base64Part && base64Part.inlineData) {
+        const imageUrl = `data:image/png;base64,${base64Part.inlineData.data}`;
+        setMessages(prev => [...prev, { 
+          role: 'ai', 
+          text: "Here is a conceptual mood board for your vision. This includes a curated selection of textures and palettes aligned with your style preferences.",
+          image: imageUrl,
+          isImage: true 
+        }]);
+      }
     } catch (error) {
       console.error(error);
       setMessages(prev => [...prev, { role: 'ai', text: "I encountered an error while visualizing your space. My creative engine might be busy—please try again or describe your ideas in text!" }]);
@@ -150,7 +158,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onClose }) => {
     try {
       // Create a new GoogleGenAI instance right before making an API call
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const response = await ai.models.generateContent({
+      const response: GenerateContentResponse = await ai.models.generateContent({
         model: selectedModel,
         contents: `Context: You are the DP Interior AI Consultant (inspired by premium brands like HomeLane). 
         Rules: 
@@ -366,7 +374,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ onClose }) => {
             
             <div className="flex justify-between items-center px-6">
               <p className="text-[10px] text-gray-400 font-bold tracking-[0.4em] uppercase">
-                Powered by Imagen & Gemini 3
+                Powered by Gemini 2.5 & 3
               </p>
               <div className="flex gap-2.5">
                  <div className="w-2 h-2 rounded-full bg-[#c5a059]"></div>

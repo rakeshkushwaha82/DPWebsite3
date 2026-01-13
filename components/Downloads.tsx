@@ -58,7 +58,7 @@ const catalogueProducts = [
     name: "Statuario Luxe Kitchen",
     specs: "BWP IS:710 Marine Ply, Anti-Fingerprint Acrylic, Blum Legrabox",
     features: "Built-in Coffee Hub, Smart Motion Lighting, Profile Handles",
-    image: "https://images.unsplash.com/photo-1556912177-c54030639a4c?auto=format&fit=crop&q=80&w=800"
+    image: "https://images.unsplash.com/photo-1556911223-e27027788ddf?auto=format&fit=crop&q=80&w=800"
   },
   {
     name: "Heritage Oak Wardrobe",
@@ -126,7 +126,7 @@ const flipbookPages = [
   { 
     title: "Gourmet Studio", 
     category: "Kitchen", 
-    image: "https://images.unsplash.com/photo-1556912177-c54030639a4c",
+    image: "https://images.unsplash.com/photo-1556911223-e27027788ddf",
     details: "Anti-fingerprint acrylic finishes, Blum Legrabox systems, and quartz countertops with built-in warming drawers and appliances."
   },
   { 
@@ -233,7 +233,7 @@ const Downloads: React.FC = () => {
                 <p className="text-gray-400 text-xs font-light leading-relaxed mb-8 line-clamp-3">{item.desc}</p>
                 <button 
                   onClick={() => handleAction(item)} 
-                  className="mt-auto w-full flex items-center justify-center gap-3 px-6 py-4 bg-gray-50 rounded-2xl border border-gray-100 text-[9px] font-bold tracking-[0.2em] uppercase text-[#001f3f] group-hover:bg-[#001f3f] group-hover:text-white transition-all shadow-sm"
+                  className="mt-auto w-full flex items-center justify-center gap-3 px-6 py-4 bg-gray-50 rounded-2xl border border-gray-100 text-xs font-bold tracking-[0.2em] uppercase text-[#001f3f] group-hover:bg-[#001f3f] group-hover:text-white transition-all shadow-sm"
                 >
                   {item.isFlipbook ? 'VIEW FLIPBOOK' : (activeDownloadId === item.file ? 'GENERATING...' : 'DOWNLOAD PDF')}
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M7 16l5 5m0 0l5-5m-5 5V3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -258,7 +258,7 @@ const Downloads: React.FC = () => {
                   <button 
                     onClick={() => handleDownload('flipbook', 'DP_Digital_Magazine.pdf')}
                     disabled={activeDownloadId !== null}
-                    className="px-8 py-3 bg-[#c5a059] text-white rounded-xl text-[9px] font-bold tracking-widest uppercase hover:bg-white hover:text-[#001a35] transition-all shadow-xl"
+                    className="px-8 py-3 bg-[#c5a059] text-white rounded-xl text-xs font-bold tracking-widest uppercase hover:bg-white hover:text-[#001a35] transition-all shadow-xl"
                   >
                     {activeDownloadId ? 'GENERATING...' : 'DOWNLOAD FULL MAGAZINE'}
                   </button>

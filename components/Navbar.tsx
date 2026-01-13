@@ -100,7 +100,7 @@ const Navbar: React.FC<NavbarProps> = ({ onConsultClick }) => {
           </div>
 
           <div className="hidden lg:flex items-center gap-10">
-            <div className="flex items-center gap-10 text-[10px] font-bold tracking-[0.25em] uppercase">
+            <div className="flex items-center gap-10 text-sm font-bold tracking-[0.15em] uppercase">
               {navLinks.map((item) => (
                 <button
                   key={item}
@@ -116,7 +116,7 @@ const Navbar: React.FC<NavbarProps> = ({ onConsultClick }) => {
             </div>
             <button 
               onClick={onConsultClick}
-              className={`transition-all duration-500 font-bold text-[10px] tracking-widest uppercase shadow-2xl hover:scale-105 active:scale-95 px-10 py-4 rounded-full ${
+              className={`transition-all duration-500 font-bold text-xs tracking-widest uppercase shadow-2xl hover:scale-105 active:scale-95 px-10 py-4 rounded-full ${
                 isScrolled 
                   ? 'bg-[#001f3f] text-white hover:bg-[#c5a059]' 
                   : 'bg-white text-[#001f3f] hover:bg-[#c5a059] hover:text-white'
@@ -203,7 +203,7 @@ const Navbar: React.FC<NavbarProps> = ({ onConsultClick }) => {
                   setIsOpen(false);
                   onConsultClick();
                 }}
-                className="w-full bg-[#001f3f] text-white py-7 rounded-[2.5rem] font-bold tracking-[0.4em] text-xs hover:bg-[#c5a059] transition-all shadow-2xl uppercase"
+                className="w-full bg-[#001f3f] text-white py-7 rounded-[2.5rem] font-bold tracking-[0.4em] text-sm hover:bg-[#c5a059] transition-all shadow-2xl uppercase"
               >
                 Free Consultation
               </button>

@@ -1,16 +1,10 @@
+
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 
-// Fix for model-viewer TypeScript error: Augmenting the global JSX namespace for custom elements.
-/* Simplified the JSX.IntrinsicElements declaration to ensure 'model-viewer' is recognized globally by the compiler */
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'model-viewer': any;
-    }
-  }
-}
+// Fix for model-viewer TypeScript error: Using 'as any' for custom element to avoid global JSX namespace pollution.
+const ModelViewerTag = 'model-viewer' as any;
 
 interface ProjectStats {
   area: string;
@@ -71,12 +65,12 @@ const PanoramaViewer: React.FC<{ url: string }> = ({ url }) => {
 
   const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
     isDragging.current = true;
-    lastX.current = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    lastX.current = 'touches' in e ? (e as React.TouchEvent).touches[0].clientX : (e as React.MouseEvent).clientX;
   };
 
   const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isDragging.current) return;
-    const currentX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const currentX = 'touches' in e ? (e as React.TouchEvent).touches[0].clientX : (e as React.MouseEvent).clientX;
     const delta = currentX - lastX.current;
     setRotation(prev => (prev - delta * 0.2));
     lastX.current = currentX;
@@ -306,6 +300,7 @@ const Gallery: React.FC<GalleryProps> = ({ onBookConsultation }) => {
     }
   };
 
+  // Upgraded to follow GenAI guidelines: Using gemini-2.5-flash-image for default image generation.
   const generateAITour = async () => {
     if (selectedIndex === null) return;
     const currentItem = filteredItems[selectedIndex];
@@ -314,24 +309,30 @@ const Gallery: React.FC<GalleryProps> = ({ onBookConsultation }) => {
     try {
       // Create a new GoogleGenAI instance right before making an API call
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const response = await ai.models.generateImages({
-        model: 'imagen-4.0-generate-001',
-        prompt: `360 panorama interior of ${currentItem.name}, luxury ${currentItem.cat} by DP Interior, style ${currentItem.stats.style}. Professional architectural photography, photorealistic, 8k.`,
+      const response: GenerateContentResponse = await ai.models.generateContent({
+        model: 'gemini-2.5-flash-image',
+        contents: {
+          parts: [
+            {
+              text: `360 panorama interior of ${currentItem.name}, luxury ${currentItem.cat} by DP Interior, style ${currentItem.stats.style}. Professional architectural photography, photorealistic, 8k.`,
+            },
+          ],
+        },
         config: {
-          numberOfImages: 1,
-          outputMimeType: 'image/jpeg',
-          aspectRatio: '16:9',
+          imageConfig: {
+            aspectRatio: "16:9",
+          },
         },
       });
 
-      const base64EncodeString = response.generatedImages[0].image.imageBytes;
-      const imageUrl = `data:image/jpeg;base64,${base64EncodeString}`;
-
-      setItems(prevItems => prevItems.map(item => 
-        item.id === currentItem.id ? { ...item, aiTourUrl: imageUrl } : item
-      ));
-      
-      setLightboxMode('tour');
+      const base64Part = response.candidates?.[0]?.content?.parts.find(p => p.inlineData);
+      if (base64Part && base64Part.inlineData) {
+        const imageUrl = `data:image/jpeg;base64,${base64Part.inlineData.data}`;
+        setItems(prevItems => prevItems.map(item => 
+          item.id === currentItem.id ? { ...item, aiTourUrl: imageUrl } : item
+        ));
+        setLightboxMode('tour');
+      }
     } catch (error) {
       console.error("AI Tour generation failed:", error);
     } finally {
@@ -553,9 +554,9 @@ const Gallery: React.FC<GalleryProps> = ({ onBookConsultation }) => {
                         className="relative"
                       >
                         <img 
-                          src={getOptimizedUrl(filteredItems[selectedIndex].url, 2400)} 
+                          src={getOptimizedUrl(filteredItems[selectedIndex!].url, 2400)} 
                           className="max-w-full max-h-[75vh] object-contain rounded-3xl shadow-3xl border border-white/5 select-none" 
-                          alt={`High resolution view of ${filteredItems[selectedIndex].name}`}
+                          alt={`High resolution view of ${filteredItems[selectedIndex!].name}`}
                           draggable={false}
                         />
                         {zoomScale > 1 && (
@@ -565,22 +566,22 @@ const Gallery: React.FC<GalleryProps> = ({ onBookConsultation }) => {
                         )}
                      </motion.div>
                    )}
-                   {lightboxMode === 'video' && <video autoPlay loop muted src={filteredItems[selectedIndex].videoUrl} className="max-w-6xl aspect-video rounded-[3rem] object-cover shadow-3xl" aria-label={`Cinematic tour of ${filteredItems[selectedIndex].name}`} />}
+                   {lightboxMode === 'video' && <video autoPlay loop muted src={filteredItems[selectedIndex!].videoUrl} className="max-w-6xl aspect-video rounded-[3rem] object-cover shadow-3xl" aria-label={`Cinematic tour of ${filteredItems[selectedIndex!].name}`} />}
                    {lightboxMode === 'tour' && (
                      <div className="w-full h-full max-w-6xl max-h-[75vh] flex flex-col items-center justify-center relative bg-black/20 rounded-[3rem] overflow-hidden">
-                        {filteredItems[selectedIndex].tourUrl ? (
-                          <model-viewer
-                            src={filteredItems[selectedIndex].tourUrl}
-                            alt={`Interactive 3D Model of ${filteredItems[selectedIndex].name}`}
+                        {filteredItems[selectedIndex!].tourUrl ? (
+                          <ModelViewerTag
+                            src={filteredItems[selectedIndex!].tourUrl}
+                            alt={`Interactive 3D Model of ${filteredItems[selectedIndex!].name}`}
                             camera-controls
                             auto-rotate
                             shadow-intensity="1"
                             exposure="1"
                             interaction-prompt="auto"
                             className="w-full h-full"
-                          ></model-viewer>
-                        ) : filteredItems[selectedIndex].aiTourUrl ? (
-                          <PanoramaViewer url={filteredItems[selectedIndex].aiTourUrl} />
+                          ></ModelViewerTag>
+                        ) : filteredItems[selectedIndex!].aiTourUrl ? (
+                          <PanoramaViewer url={filteredItems[selectedIndex!].aiTourUrl!} />
                         ) : (
                           <div className="flex flex-col items-center gap-10 p-20 text-center">
                             <div className="w-24 h-24 bg-[#c5a059]/10 rounded-full flex items-center justify-center mb-6">
@@ -605,19 +606,19 @@ const Gallery: React.FC<GalleryProps> = ({ onBookConsultation }) => {
                   <div className="flex gap-12 items-start flex-wrap">
                     <div>
                         <p className="text-gray-500 text-[8px] font-bold uppercase tracking-[0.4em] mb-2">Area Scale</p>
-                        <p className="text-white text-lg font-bold font-serif">{filteredItems[selectedIndex].stats.area}</p>
+                        <p className="text-white text-lg font-bold font-serif">{filteredItems[selectedIndex!].stats.area}</p>
                     </div>
                     <div className="h-8 w-[1px] bg-white/10 hidden md:block mt-2"></div>
                     <div>
                         <p className="text-gray-500 text-[8px] font-bold uppercase tracking-[0.4em] mb-2">Design Concept</p>
-                        <p className="text-white text-lg font-bold font-serif uppercase tracking-widest">{filteredItems[selectedIndex].stats.style}</p>
+                        <p className="text-white text-lg font-bold font-serif uppercase tracking-widest">{filteredItems[selectedIndex!].stats.style}</p>
                     </div>
-                    {filteredItems[selectedIndex].client && (
+                    {filteredItems[selectedIndex!].client && (
                       <>
                         <div className="h-8 w-[1px] bg-white/10 hidden md:block mt-2"></div>
                         <div>
                           <p className="text-gray-500 text-[8px] font-bold uppercase tracking-[0.4em] mb-2">Client Identity</p>
-                          <p className="text-white text-lg font-bold font-serif">{filteredItems[selectedIndex].client}</p>
+                          <p className="text-white text-lg font-bold font-serif">{filteredItems[selectedIndex!].client}</p>
                         </div>
                       </>
                     )}
@@ -626,7 +627,7 @@ const Gallery: React.FC<GalleryProps> = ({ onBookConsultation }) => {
                   <div className="flex flex-col gap-6 w-full lg:w-auto">
                     <button 
                       onClick={() => {
-                          onBookConsultation(`${filteredItems[selectedIndex].name} (${filteredItems[selectedIndex].stats.style})`);
+                          onBookConsultation(`${filteredItems[selectedIndex!].name} (${filteredItems[selectedIndex!].stats.style})`);
                           closeLightbox();
                       }} 
                       className="bg-white text-[#001f3f] px-12 py-6 rounded-2xl font-bold text-[10px] tracking-[0.3em] uppercase hover:bg-[#c5a059] hover:text-white transition-all shadow-2xl"
@@ -642,11 +643,11 @@ const Gallery: React.FC<GalleryProps> = ({ onBookConsultation }) => {
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-12 pt-10 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                 >
-                  {filteredItems[selectedIndex].designFeatures && (
+                  {filteredItems[selectedIndex!].designFeatures && (
                     <div>
                       <h5 className="text-[#c5a059] text-[9px] font-bold uppercase tracking-[0.3em] mb-4">Core Deliverables</h5>
                       <ul className="space-y-3" role="list">
-                          {filteredItems[selectedIndex].designFeatures.map((feat, fIdx) => (
+                          {filteredItems[selectedIndex!].designFeatures!.map((feat, fIdx) => (
                             <li key={fIdx} className="flex items-center gap-3 text-white/60 text-xs font-light">
                               <div className="w-1 h-1 bg-[#c5a059] rounded-full"></div>
                               {feat}
@@ -655,10 +656,10 @@ const Gallery: React.FC<GalleryProps> = ({ onBookConsultation }) => {
                       </ul>
                     </div>
                   )}
-                  <div className={filteredItems[selectedIndex].designFeatures ? "md:col-span-2" : "md:col-span-3"}>
+                  <div className={filteredItems[selectedIndex!].designFeatures ? "md:col-span-2" : "md:col-span-3"}>
                     <h5 className="text-[#c5a059] text-[9px] font-bold uppercase tracking-[0.3em] mb-4">Architectural Vision</h5>
                     <p className="text-white/50 text-sm font-light leading-relaxed max-w-2xl">
-                      {filteredItems[selectedIndex].description} This project was optimized for high-performance {filteredItems[selectedIndex].industry?.toLowerCase() || 'living'} operations, integrating signature branding with functional architectural excellence.
+                      {filteredItems[selectedIndex!].description} This project was optimized for high-performance {filteredItems[selectedIndex!].industry?.toLowerCase() || 'living'} operations, integrating signature branding with functional architectural excellence.
                     </p>
                   </div>
                 </motion.div>
