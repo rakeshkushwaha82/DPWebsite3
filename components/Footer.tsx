@@ -20,7 +20,6 @@ const LogoSVG = () => (
 const Footer: React.FC = () => {
   return (
     <footer className="bg-[#001a35] text-white pt-24 pb-12 overflow-hidden relative">
-      {/* Cinematic Watermark */}
       <div className="absolute top-10 right-[-10%] text-[18vw] font-serif font-bold text-white/[0.01] pointer-events-none select-none tracking-tighter">
         DESIGN PERFECTION
       </div>
@@ -70,7 +69,7 @@ const Footer: React.FC = () => {
               </div>
               <div className="flex gap-5">
                 <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-[#c5a059] flex-shrink-0">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1.01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
                 </div>
                 <p>+91 98999 65110<br/>+91 81783 75393</p>
               </div>
@@ -83,7 +82,7 @@ const Footer: React.FC = () => {
             <div className="relative group">
               <input type="email" placeholder="Email Address" className="w-full bg-white/5 border-b border-white/20 py-5 px-3 text-sm focus:outline-none focus:border-[#c5a059] transition-all" />
               <button className="absolute right-0 top-1/2 -translate-y-1/2 text-[#c5a059] p-3 hover:scale-110 transition-transform">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
               </button>
             </div>
           </div>
@@ -92,7 +91,7 @@ const Footer: React.FC = () => {
         <div className="pt-16 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex flex-col gap-2">
             <p className="text-gray-500 text-[10px] uppercase tracking-[0.4em] font-bold">
-              © 2024 DP Interior. Crafting Designer Sanctuaries.
+              © 2026 DP Interior. Crafting Designer Sanctuaries.
             </p>
             <p className="text-[#c5a059] text-[9px] uppercase tracking-[0.3em] font-bold">
               Designed by : PRVM Consultancy services 9910691877

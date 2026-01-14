@@ -100,17 +100,17 @@ const Navbar: React.FC<NavbarProps> = ({ onConsultClick }) => {
           </div>
 
           <div className="hidden lg:flex items-center gap-10">
-            <div className="flex items-center gap-10 text-sm font-bold tracking-[0.15em] uppercase">
+            <div className="flex items-center gap-12 text-base font-bold tracking-[0.1em] uppercase">
               {navLinks.map((item) => (
                 <button
                   key={item}
                   onClick={() => handleNavClick(item.toLowerCase())}
                   className={`transition-all hover:text-[#c5a059] relative py-2 group ${
-                    isScrolled ? 'text-gray-600' : 'text-white'
+                    isScrolled ? 'text-[#001f3f]' : 'text-white'
                   }`}
                 >
                   {item}
-                  <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#c5a059] transition-all duration-500 group-hover:w-full" />
+                  <span className="absolute bottom-0 left-0 w-0 h-[2.5px] bg-[#c5a059] transition-all duration-500 group-hover:w-full" />
                 </button>
               ))}
             </div>

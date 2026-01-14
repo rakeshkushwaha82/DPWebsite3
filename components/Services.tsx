@@ -34,7 +34,6 @@ interface ServiceDetail {
   techSpecs?: TechSpec[];
 }
 
-// Reusable SVG Icons for Material Attributes
 const Icons = {
   Waterproof: (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,8 +60,8 @@ const Icons = {
 const services: ServiceDetail[] = [
   {
     title: "Modular Kitchens",
-    desc: "Ergonomic designs with high-grade BWP Marine Ply and smart storage.",
-    image: "https://images.unsplash.com/photo-1556911223-e27027788ddf?auto=format&fit=crop&q=80&w=1200",
+    desc: "Ergonomic 2026 designs with high-grade BWP Marine Ply and smart storage.",
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200",
     details: "Our modular kitchens are engineered for Indian cooking styles while maintaining European aesthetic standards. We focus on 'The Golden Triangle' efficiency.",
     philosophy: "We follow the 'Ergo-Workflow' philosophy, adjusting counter heights and zoning storage by frequency of use.",
     materials: [
@@ -71,14 +70,14 @@ const services: ServiceDetail[] = [
     ],
     materialBadges: [{ label: "Waterproof", icon: Icons.Waterproof }, { label: "Termite Proof", icon: Icons.TermiteProof }],
     features: ["Oil-pullouts", "Magic Corners", "Built-in Appliances", "G-Profile Handles"],
-    gallery: ["https://images.unsplash.com/photo-1556911223-e27027788ddf?auto=format&fit=crop&q=80&w=1200", "https://images.unsplash.com/photo-1565538810643-95bdb8104517?auto=format&fit=crop&q=80&w=1200"],
+    gallery: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200", "https://images.unsplash.com/photo-1565538810643-95bdb8104517?auto=format&fit=crop&q=80&w=1200"],
     techSpecs: [
         { label: "Delivery", value: "45 Days", icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" strokeWidth="2" /></svg> }
     ]
   },
   {
     title: "Commercial Offices",
-    desc: "Bespoke corporate interiors designed for productivity and brand identity.",
+    desc: "Bespoke corporate interiors for 2026 designed for productivity and brand identity.",
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800",
     details: "Transforming workspaces into hubs of innovation. From acoustic optimization to ergonomic furniture.",
     philosophy: "Agile workspace methodology focusing on collaborative zones and individual focus pods.",
@@ -112,7 +111,7 @@ const services: ServiceDetail[] = [
   },
   {
     title: "Residential Masterpieces",
-    desc: "Complete home interiors from concept to 45-day guaranteed move-in.",
+    desc: "Complete home interiors from concept to 45-day guaranteed 2026 move-in.",
     image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=800",
     details: "Comprehensive design solutions for 2BHK, 3BHK, and luxury villas across Delhi NCR.",
     philosophy: "Atmospheric equilibrium using layered lighting and texture-rich wall treatments.",
